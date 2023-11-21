@@ -1,0 +1,57 @@
+import pandas as pd
+import requests
+import bs4
+import matplotlib.pyplot as plt
+import seaborn as sns
+url="https://www.kaggle.com/datasets/fatihb/coffee-quality-data-cqi"
+res= requests.get(url)
+df=bs4.BeautifulSoup(res.text , features="html.parser")
+#print(df)
+f1=df.find('title')
+#print(f1)
+f2=df.find('head')
+#print(f2)
+f3=df.find_all('script')
+#print(f3)
+f4=f3[5]
+#print(f4)
+data=f4.text
+now=data.find('description')
+#print(now)
+data1=data[111:2867]
+#print(data1)
+data2=data1.split('.')
+#print(data2)
+def get_id(num):
+    inform=data2
+    beg=0
+    end=beg+num
+    return inform[beg:num]
+#print(get_id(5))
+dff=pd.read_csv(r'C:\Users\INDRAKSHI\Documents\pandasAPP\coffee.csv')
+dff1=dff.head(2)
+#print(dff1)
+#print(dff.info)
+#print(dff1.isnull())
+say=dff.isnull().any()
+#print(say)
+#print(dff['Altitude'].isnull().any())
+#print( dff['Variety'].isnull().any())
+#print(dff['Producer'].isnull().any())
+#print(dff['Region'].isnull().any())
+#print(dff['Mill'].isnull().any())
+#print(dff['Farm Name'].isnull().any())
+col_miss=[col for col in dff.columns if dff[col].isnull().any()]
+red=dff.drop(col_miss , axis =1)
+#print(red)
+#print(dff['Variety'].value_counts())
+#print(dff['Farm Name'].value_counts())
+#print(red.describe)
+sns.histplot(data=dff,y='Producer',color='red',label='maker')
+sns.histplot(data=dff,x='Number of Bags' ,color='blue',label='quantity')
+plt.ylim([-100,200])
+plt.xlim([-200,800])
+plt.legend()
+plt.show()
+sns.scatterplot(data=dff , x= 'Number of Bags' , y= 'Producer',hue='Variety',legend="full")
+plt.show()
